@@ -32,7 +32,7 @@ The kernel's tasks:
 3. 内核会干预所有事情，比如一个进程创建另一个进程，一个进程创建一个管道，将数据写到一个文件，事实上就是进程请求内核完成这样的工作，间接性的
 
 #### 2.2 The Shell
-命令解释器。
+命令解释器。bash = `Bournel again shell`, sh = `Bourne shell`
 
 #### 2.3 用户和分组
 + 用户：在`/etc/passwd`文件中记录，用户名，工作目录和使用`shell`
@@ -58,3 +58,8 @@ The kernel's tasks:
 熟悉`stdio`阅读[APUE 3rd](https://www.amazon.com/Advanced-Programming-UNIX-Environment-3rd/dp/0321637739)
 
 #### 2.5 程序
+1. 源码 -> 编译 -> 链接 -> 程序（二进制机器语言）
+2. 过滤器程序：如 cat, grep, sed等
+3. c 程序读取命令行参数，`int main(int argc, char *argv[])`， argc 是参数个数，argv[0] 是程序名自身
+4. 进程是在运行程序的实例，执行程序：内核将程序代码加载进`虚拟内存`, 给程序变量分配空间，更新内核对进程的记录信息的数据结构。在内核的视角看，资源的生命周期视进程的需求或者综合的系统需求来确定。进程终止，资源释放可让其他进程使用。
+5. 进程逻辑上是分段的(segments)：I. 指令；II. 数据；III. 堆(heap)，动态分配额外内存；VI. 栈(stack)，可收缩内存，供函数调用，返回，局部变量等
