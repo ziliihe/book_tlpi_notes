@@ -17,13 +17,14 @@ In addition to the POSIX's history, blow:
 The Kernel refers to the central software that manages and allocates computer resources(CPU, RAM and devices), This also refers to the operating systems.
 
 The kernel's tasks:
-1. Process Schedules: every process needs CPU and memory to process its tasks. The kernel process scheduler handles the situation like multitasking.
-2. Memory Management: process has isolation. They can't read or modify other processes' memory, also they can't do these things to the kernel. Keeping some memory to reduce the memory requirements is necessary(maybe it is the cache).
-3. Provision of a file system: files operations and records.
-4. Creation and Termination of processes: The kernel can load a new program into memory, providing it with resources(CPU, memory and files). After the termination of processes, the kernel releases the resources.
-5. Access of devices: The kernel access the devices like mice, keyboards and screens for input and output.
-6. Networking: The kernel as the agent of the user processes, receives and transmits network messages. Routing network packages.
-7. System call(api): Processes can request the kernel to perform various tasks.
+1. **Process Schedules**: every process needs CPU and memory to process its tasks. The kernel process scheduler handles the situation like multitasking.
+2. **Memory Management**: process has isolation. They can't read or modify other processes' memory, also they can't do these things to the kernel. Keeping some memory to reduce the memory requirements is necessary(maybe it is the cache).
+3. **Provision of a file system**: files operations and records.
+4. **Creation and Termination of processes**: The kernel can load a new program into memory, providing it with resources(CPU, memory and files). After the termination of processes, the kernel releases the resources.
+5. **Access of devices**: The kernel access the devices like mice, keyboards and screens for input and output.
+6. **Networking**: The kernel as the agent of the user processes, receives and transmits network messages. Routing network packages.
+7. **System call(api)**: Processes can request the kernel to perform various tasks.
+
 
 内核态和用户态: 
 1. 硬件指令允许从一个状态转换到另一个状态
@@ -31,3 +32,29 @@ The kernel's tasks:
 3. 内核会干预所有事情，比如一个进程创建另一个进程，一个进程创建一个管道，将数据写到一个文件，事实上就是进程请求内核完成这样的工作，间接性的
 
 #### 2.2 The Shell
+命令解释器。
+
+#### 2.3 用户和分组
++ 用户：在`/etc/passwd`文件中记录，用户名，工作目录和使用`shell`
++ 分组：在`/etc/group`文件中，以分号分隔
++ 超级用户：id -- `0`, login name -- `root`
+
+#### 2.4 目录层级，目录， 文件和链接
+大致如图：
+
+![directory hierarchy](img/directory_hierarchy.png)
+
+1. 最高一级是`/`--根目录
+2. 文件类型：`regular`, `plain`, `devices`, `pipe`, `sockets`, `目录`和`符号链接`
+3. `/..` == `/`
+4. 符号链接是文件或者目录的别名，指向的文件不存在是一个悬挂链接(dangling link)
+5. 文件名可以最多`255`个字符
+6. 路径名称：相对路径和绝对路径
+7. 当前工作目录，每个进程都需要
+8. 权限和所属，每个文件有权限标识(rwx， 读/写/执行)，都有所属用户和分组，文件夹同
+9. 文件 `I/O` 模型， Unix, file -- `end-of-file`
+10. 文件描述符(file descriptor), I/O 系统指的是使用文件描述符打开文件，通常是一个非负的整数(通常有点小), `open()`函数。0--标准输入(stdin)，1--标准输出(stdout)，2--标准错误(stderr)
+
+熟悉`stdio`阅读[APUE 3rd](https://www.amazon.com/Advanced-Programming-UNIX-Environment-3rd/dp/0321637739)
+
+#### 2.5 程序
