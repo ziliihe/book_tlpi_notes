@@ -210,6 +210,37 @@ int main()
 3. `errno`在头文件`<errno.h>`中
 4. 调用成功不会重置`errno`，它会保留上次调用失败的值
 5. 检查函数返回值代表的错误，再检查`errno`是否有记录错误的原因
-6. 首先将`errno`设置成0， 调用后再检查他的值
+6. 首先将`errno`设置成0， 调用后再检查他的值；调用返回`-1`并且`errno`是非零值，那么发生了错误
+7. 打印错误信息：`void perror(const char *msg);` 打印传递的msg参数消息  `<stdio.h>`
+8. 打印错误信息：`char *strerror(int errnum);` 返回errnum对应的错误字符串；返回的string是静态分配的，可以被后来者重新覆盖；errnum不能被识别，返回`Unknown error num` `<string.h>`
+9. 库函数正常按照系统调用处理错误：调用返回`-1`代表错误发生，设置`errno`标识特定错误；`remove()`移除文件使用的是`unlink()`系统调用，移除文件夹使用的是`rmdir()`系统调用
+10. 库函数返回值不是-1，但是会让底层系统调用设置`errno`变量；`fopen()`返回一个`NULL`指针表示错误，`errno`设置值取决于系统调用的失败情况，`perror()`和`strerror()`可以诊断这种情况
+11. 库函数压根儿不使用`errno`变量，查看手册确认怎么处理错误的
+#### 3.5 书籍代码
+1. 命令行解析使用库函数`getopt()`
+2. `lib/tlpi_hdr.h`
+3. POSIX线程处理错误的返回结果是错误常数
+4. `lvalue`左值是一个表达式，它指向一块存储区域；`p`是一个指针，`*p`就是一个左值
+5. 在POSIX线程应用接口下面，`errno`定义为一个函数，返回一个指针，指向线程专有的存储
 
-#### 
+可变参数函数
+```c
+// n 个参数
+int average(int n, ...)
+{
+    va_list argList; 
+    double average = 0.0;
+    int sum = 0;
+    
+    // 初始化多个参数到 argList
+    va_start(argList, n);
+    int i;
+    // 遍历存到 argList 中的多个参数
+    for (i=0;i < n; i++) {
+        sum += va_arg(argList, int);
+    }
+    // 清理 argList 变量内存
+    va_end(argList);
+    return (double) sum / n;
+}
+```
