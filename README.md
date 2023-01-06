@@ -244,3 +244,39 @@ int average(int n, ...)
     return (double) sum / n;
 }
 ```
+
+[练习3-1](https://man7.org/linux/man-pages/man2/reboot.2.html)
+- LINUX_REBOOT_MAGIC1: `0xfee1dead`
+- LINUX_REBOOT_MAGIC2: `672274793`
+
+
+### 第四章 文件 I/O, 全局 I/O 模型
+#### 4.1 总览
+所有执行系统调用的指向打开的文件，是通过文件描述符，是一个非负的证书。包括管道，先进先出(FIFOs)的队列，套接字，终端，设备或者普通文件，导致就是每个进程可能有一系列它自己的文件描述符(file descriptor)。
+
+标准文件的描述符，POSIX标准名字定义在`<unistd.h>`头文件中。注意，可能会更改，比如在`stdout`应用``freopen()`之后，不能再假设地层的文件描述符是1了，可能已经更改。
+![standard file descriptor](img/file_descriptor.png)
+
+打开或者创建文件`fd = open(pathname, flags, mode)`, pathname是文件的路径，包括文件名，文件如果不存在，那么会创建它，取决于`flags`的值；如果要创建文件，mode就是指定文件权限的。打开文件之后，就通过`numread = read(fd, buffer, count)`，从打开的文件流`fd`中，读取最多cont个字节，然后存到`buffer`中，返回实际读取的字节数量。接着就是写入文件，`numwritten = write(fd, buffer, count)`，从`buffer`缓冲中，写入到`fd`指向的打开文件中，写入最多count个字节的数据，并返回实际写入的字节数量。最后就是完成所有操作之后对文件的关闭，`status = close(fd)`，释放文件描述符`fd`和关联的内核资源。
+
+文件的打开标识`flags mask`如下：
+
+|访问模式|描述|
+|-------|-----|
+|O_RDONLY|以只读模式打开文件|
+|O_WRONLY|以只写模式打开文件|
+|O_RDWR|以可读写模式打开文件|
+
+注：`open()`指定`O_CREAT`了，就不能忽略`mode`设定
+
+写入数据总是建议在文件最后追加`O_APPEND`
+
+`open()`系统调用的参数
+
+![open()](img/open_flag_arguments.png)
+### 附录
+系统数据类型
+|数据类型|SUSv3 类型要求|描述|
+|-------|-------------|-----|
+|mode_t |整型|文件权限和类型|
+|ssize_t|有符号整型|字节数或者负数错误标识码|
