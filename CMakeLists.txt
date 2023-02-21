@@ -7,5 +7,10 @@ add_executable(copy chapter04/fileio/copy.c)
 set_target_properties(copy PROPERTIES 
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/chapter04/fileio
 )
-
 target_link_libraries(copy PUBLIC tlpi)
+
+add_executable(seek_io chapter04/fileio/seek_io.c)
+set_target_properties(seek_io PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/chapter04/fileio
+)
+target_link_libraries(seek_io PUBLIC tlpi)

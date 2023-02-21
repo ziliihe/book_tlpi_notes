@@ -270,9 +270,20 @@ int average(int n, ...)
 
 注：`open()`指定`O_CREAT`了，就不能忽略`mode`设定
 
-写入数据总是建议在文件最后追加`O_APPEND`
+写入数据总是建议在文件最后追加`O_APPEND`，若是没有指定
+```c
+/*
+ * O_CREAT 如果文件不存在，则创建它
+ * O_TRUNC 清空文件
+ * O_APPEND 在文件末尾添加
+ * 
+ * S_IRUSER 文件所有者 -- 读
+ * S_IWUSER 文件所有者 -- 写
+ */
+int fd3 = open("w.log", O_WRONLY | O_CREAT | O_TRUNC | O_APPEND, S_IRUSR | S_IWUSR);
+```
 
-`open()`系统调用的参数
+`open()`系统调用的参数，标准输入(standard input)的文件描述符是 0
 
 ![open()](img/open_flag_arguments.png)
 
@@ -280,9 +291,11 @@ int average(int n, ...)
 - 第二部分： 文件创建标志
 - 第三部分： 文件打开状态标志， 可以使用`fcntl()`的`F_GETFL`--获取，`F_SETFL`--修改
 
-当打开文件时产生错误时，`open()`返回-1, 然后`errno`设置特定的错误原因。
+当文件正常打开返回非负整数的文件描述符，当打开文件时产生错误时，`open()`返回-1, 然后`errno`设置特定的错误原因。
 
 创建文件的系统调用`creat()`等价于`fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, mode)`，前者已经被废弃不用了。
+
+`fcntl()`是 Linux 操作系统中非常重要的一个系统调用，它可以对文件描述符进行非常细粒度的控制，使得程序员能够更加灵活地管理打开的文件和进程。
 
 #### 4.4 读取文件--`read()`
 系统调用不会给为调用者返回信息的缓冲区分配空间，需要传递一个指针给以前分配好的缓冲区。
@@ -360,6 +373,10 @@ lseek(fd, 10000, SEEK_END); /* 10001 bytes past last byte of file */
 调用`lseek()`只是简单的调整内核对于关联文件描述符的文件偏移量，不会造成任何物理设备的访问。**不能用于管道，先进先出队列（FIFO），套接字和终端。**,如果错误应用那么会失败，`errno`设置为`ESPIPE`。
 
 大多数操作系统对于文件的空间是以块为单位分配的，块的大小取决于操作系统。
+
+uinx 的IO模型是全局的IO模型，使用系统调用`read(), write(), open(), close()`可以对所有的类型的文件执行IO。文件系统和设备驱动都实现了相同的IO系统调用集合，因为提供给内核的时候，并不能知道是文件系统还是具体设备。
+
+
 ### 附录
 系统数据类型
 |数据类型|SUSv3 类型要求|描述|
