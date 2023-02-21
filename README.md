@@ -259,6 +259,7 @@ int average(int n, ...)
 
 打开或者创建文件`fd = open(pathname, flags, mode)`, pathname是文件的路径，包括文件名，文件如果不存在，那么会创建它，取决于`flags`的值；如果要创建文件，mode就是指定文件权限的。打开文件之后，就通过`numread = read(fd, buffer, count)`，从打开的文件流`fd`中，读取最多cont个字节，然后存到`buffer`中，返回实际读取的字节数量。接着就是写入文件，`numwritten = write(fd, buffer, count)`，从`buffer`缓冲中，写入到`fd`指向的打开文件中，写入最多count个字节的数据，并返回实际写入的字节数量。最后就是完成所有操作之后对文件的关闭，`status = close(fd)`，释放文件描述符`fd`和关联的内核资源。
 
+#### 4.3 打开文件： `open()`
 文件的打开标识`flags mask`如下：
 
 |访问模式|描述|
@@ -274,9 +275,95 @@ int average(int n, ...)
 `open()`系统调用的参数
 
 ![open()](img/open_flag_arguments.png)
+
+- 第一部分： 文件访问模式标志， 可以使用`fcntl()`的`F_GETFL`操作获取
+- 第二部分： 文件创建标志
+- 第三部分： 文件打开状态标志， 可以使用`fcntl()`的`F_GETFL`--获取，`F_SETFL`--修改
+
+当打开文件时产生错误时，`open()`返回-1, 然后`errno`设置特定的错误原因。
+
+创建文件的系统调用`creat()`等价于`fd = open(pathname, O_WRONLY | O_CREAT | O_TRUNC, mode)`，前者已经被废弃不用了。
+
+#### 4.4 读取文件--`read()`
+系统调用不会给为调用者返回信息的缓冲区分配空间，需要传递一个指针给以前分配好的缓冲区。
+```c
+#include <unistd.h>
+
+ssize_t read(int fd, void *buffer, size_t count);
+```
+具体read的使用。
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+
+// 这里定义缓冲区长度和实际读取文件的字符字节数量
+// 至少比最大的字符串长一些
+#define MAX_READ 20
+char buffer[MAX_READ];
+
+int main()
+{
+    int fd = open("t3.c", O_RDONLY);
+    int re = read(fd, buffer, MAX_READ);
+    printf("fd %d, re %d, errno %d\n", fd, re, errno);
+
+    printf("The input data was: %s\n", buffer);
+    return 0;
+}
+```
+#### 4.5 写入文件--`write()`
+宏编译传递
+```c
+// 如果这里通过命令行传递了 -DM1=nn，那么这个条件判断的宏里面的define不会执行
+#ifndef M1
+    #define M1 20
+#endif
+```
+[代码](test/t5.c)
+
+#### 4.6 关闭文件--`close()`
+两件重要的事情，一是需要对不需要的文件描述符关闭，因为其对进程来说是有限资源。二就是需要对关闭过程进行错误检查，保证正常关闭文件。
+
+#### 4.7 改变文件的偏移量--`lseek()`
+文件的偏移量，就是文件内容的第一个字节，偏移量是0，就是相对于文件的开始。
+
+```c
+#include <unistd.h>
+
+off_t lseek(int fd, off_t offset, int whence);
+```
+whence 参数值
+
+| whence | 说明|offset 正负说明|
+|--------|-----|-----|
+|SEEK_SET|从文件开始设置偏移量为`offset`|非负|
+|SEEK_CUR|从文件当前偏移量位置调整`offset`个偏移量|可以正数，负数|
+|SEEK_END|文件大小+`offset`，即文件最后一个字节的下一个字节|可以正数，负数|
+
+图示：
+
+![whence](img/lseek_whence.png)
+
+示例，获取当前文件偏移量，不改变其值
+```c
+crr = lseek(fd, 0, SEEK_CUR);
+```
+```c
+lseek(fd, 0, SEEK_SET); /* Start of file */
+lseek(fd, 0, SEEK_END); /* Next byte after the end of the file */
+lseek(fd, -1, SEEK_END); /* Last byte of file */
+lseek(fd, -10, SEEK_CUR); /* Ten bytes prior to current location */
+lseek(fd, 10000, SEEK_END); /* 10001 bytes past last byte of file */
+```
+调用`lseek()`只是简单的调整内核对于关联文件描述符的文件偏移量，不会造成任何物理设备的访问。**不能用于管道，先进先出队列（FIFO），套接字和终端。**,如果错误应用那么会失败，`errno`设置为`ESPIPE`。
+
+大多数操作系统对于文件的空间是以块为单位分配的，块的大小取决于操作系统。
 ### 附录
 系统数据类型
 |数据类型|SUSv3 类型要求|描述|
 |-------|-------------|-----|
 |mode_t |整型|文件权限和类型|
 |ssize_t|有符号整型|字节数或者负数错误标识码|
+|off_t|有符号整型|文件的偏移量或者大小|
