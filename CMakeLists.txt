@@ -14,3 +14,9 @@ set_target_properties(seek_io PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/chapter04/fileio
 )
 target_link_libraries(seek_io PUBLIC tlpi)
+
+add_executable(t_getopt chapter04/fileio/t_getopt.c)
+set_target_properties(t_getopt PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/chapter04/fileio
+)
+target_link_libraries(t_getopt PUBLIC tlpi)
