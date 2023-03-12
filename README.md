@@ -377,6 +377,35 @@ lseek(fd, 10000, SEEK_END); /* 10001 bytes past last byte of file */
 uinx 的IO模型是全局的IO模型，使用系统调用`read(), write(), open(), close()`可以对所有的类型的文件执行IO。文件系统和设备驱动都实现了相同的IO系统调用集合，因为提供给内核的时候，并不能知道是文件系统还是具体设备。
 
 
+## linux 是怎样工作的
+CPU存在内核模式和用户模式两种模式，只有处于内核模式时才允许访问设备。
+
+```sh
+sudo apt install sysstat
+sar -P ALL 1 1  # 每秒采集一次 共采集 1 次
+strace -T -o 01.log ./01 # 打印时间，程序所有系统调用记录，输出为文件格式
+strace -tt -o 01.log ./01 # 打印时间，格式化时间，程序所有系统调用记录，输出为文件格式
+
+ldd /bin/echo
+
+# 查看elf详情
+readelf -h /bin/sleep
+# 取代码段与数据段在文件中的偏移量、大小和起始地址。
+# .text对应的是代码段的信息，.data对应的是数据段的信息
+readelf -S /bin/sleep  
+# ps -eo命令的etime字段和time字段分别表示进程从开始到执行命令为止的运行时间和执行时间。
+taskset -c 0 python3 ./loop.py&
+ps -eo pid,comm,etime,time
+nice -n 5 python3 ./loop.py &
+# 查看缺页中断
+sar -B 1
+# 查看是否发生交换处理
+sar -W 1
+# 通过kbswpused字段的值了解交换分区使用量的变化趋势即可。如果这个值不断增加，就非常危险。
+sar -S 1
+# kbpgtbl 查看页表使用的物理内存量
+ar -r ALL 1
+```
 ### 附录
 系统数据类型
 |数据类型|SUSv3 类型要求|描述|
