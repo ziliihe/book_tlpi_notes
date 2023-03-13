@@ -406,6 +406,63 @@ sar -S 1
 # kbpgtbl 查看页表使用的物理内存量
 ar -r ALL 1
 ```
+高速缓存是把内存上的数据缓存到高速缓存上，而页面缓存则是将外部存储器上的文件数据缓存到内存上。高速缓存以缓存块为单位处理数据，而页面缓存则以页为单位处理数据。
+
+页面缓存占用的是高速缓存的空间。
+```sh
+dd if=/dev/zero of=testfile oflag=direct bs=1M count=1K
+# if=/dev/zero：使用 /dev/zero 设备作为输入源，即从 /dev/zero 读取数据作为 testfile 的内容。
+# of=testfile：指定输出文件为 testfile。
+# oflag=direct：使用 direct I/O 模式进行数据传输，直接绕过系统缓存。
+# bs=1M：设置每次读写操作的块大小为 1MB。
+# count=1K：设置操作的块数为 1K（即 1024），因此总大小为 1GB。
+```
+安装`sar`系统资源统计工具
+```sh
+yum install sysstat
+```
+
+查看页面缓存
+```sh
+# buffer/cache
+free 
+# kbbuffers kbcached
+sar -r 1
+```
+查看页面调入调出
+```sh
+sar -B 1
+```
+- pgpgin/s：每秒钟从磁盘读入的页数，即每秒钟发生的页面输入量。
+- pgpgout/s：每秒钟写到磁盘的页数，即每秒钟发生的页面输出量。
+- fault/s：每秒钟发生的缺页中断数，即每秒钟发生的页面访问错误数。
+- majflt/s：每秒钟发生的主缺页中断数，即每秒钟发生的无法通过页面缓存满足的缺页数。
+- pgfree/s：每秒钟空闲内存页数，即每秒钟回收的页面数量。
+- pgscank/s：每秒钟进行页面扫描的次数。
+- pgscand/s：每秒钟扫描的页面数。
+- pgsteal/s：每秒钟被回收的页面数，即每秒钟从应用程序中抢占的页面数量。
+- %vmeff：虚拟内存使用效率，即主存中不在页面缓存中的页所占的比例。
+外部存储器的读写情况
+```sh
+# rd_sec/s和wr_sec/s分别代表外部存储器（在这里是sda）每秒的读取数据量和写入数据量。
+# %util指的是在监测周期（在这个例子中为1秒）内，访问外部存储器消耗的时间所占的比例。
+sar -d -p 1
+```
+脏页的回写周期可以通过sysctl的vm.dirty_writeback_centisecs参数更改
+```sh
+sysctl vm.dirty_writeback_centisecs
+```
+Linux中也有当系统内存不足时防止产生剧烈的回写负荷的参数。通过vm.dirty_backgroud_ratio参数可以指定一个百分比值，当脏页占用的内存量与系统搭载的内存总量的比值超过这一百分比值时，后台就会开始运行回写处理
+```sh
+sysctl vm.dirty_background_rati
+```
+清理系统缓存
+```sh
+# 1：清除页缓存（page cache）
+# 2：清除回收缓存（dentries和inodes）
+# 3：同时清除页缓存和回收缓存
+echo 3 > /proc/sys/vm/drop_caches
+```
 ### 附录
 系统数据类型
 |数据类型|SUSv3 类型要求|描述|
