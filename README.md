@@ -463,6 +463,9 @@ sysctl vm.dirty_background_rati
 # 3：同时清除页缓存和回收缓存
 echo 3 > /proc/sys/vm/drop_caches
 ```
+
+#### 文件系统
+
 ### 附录
 系统数据类型
 |数据类型|SUSv3 类型要求|描述|
