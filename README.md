@@ -465,6 +465,7 @@ echo 3 > /proc/sys/vm/drop_caches
 ```
 
 #### 文件系统
+![image](https://user-images.githubusercontent.com/35592711/224653473-580d2982-3eff-4432-92c6-ff3d1c5bdd41.png)
 
 ### 附录
 系统数据类型
