@@ -377,6 +377,17 @@ lseek(fd, 10000, SEEK_END); /* 10001 bytes past last byte of file */
 uinx 的IO模型是全局的IO模型，使用系统调用`read(), write(), open(), close()`可以对所有的类型的文件执行IO。文件系统和设备驱动都实现了相同的IO系统调用集合，因为提供给内核的时候，并不能知道是文件系统还是具体设备。
 
 
+### 第五章
+文件的访问标识使用判别：
+```c
+...
+    if ( (flags & O_ACCMODE) == O_RDONLY ) {
+        printf("open read only.\n");
+    }
+...
+```
+可以使用`fcntl()`的`F_SETFL`命令来修改打开文件的某些状态标志。允许更改的标志有`O_APPEND`、`O_NONBLOCK`、`O_NOATIME`、`O_ASYNC`和`O_DIRECT`
+
 ## linux 是怎样工作的
 CPU存在内核模式和用户模式两种模式，只有处于内核模式时才允许访问设备。
 
@@ -466,6 +477,8 @@ echo 3 > /proc/sys/vm/drop_caches
 
 #### 文件系统
 ![image](https://user-images.githubusercontent.com/35592711/224653473-580d2982-3eff-4432-92c6-ff3d1c5bdd41.png)
+
+
 
 ### 附录
 系统数据类型
