@@ -12,4 +12,4 @@ chapter 01
 | file | usage| description |
 |:----:|------|-------------|
 | [dir.c](ch01/dir.c)| dir <path>| list path |
-|[cp-in-to-out.c](ch01/cp-in-to-out.c)| ./cp-in-to-out > data<br>./cp-in-to-out < infile > outputfile| data as the output file<br>cp infile to outputfile|
+|[mecho0.c](ch01/mecho0.c)| ./mecho0 > data<br>./mecho0 < infile > outputfile| data as the output file<br>cp infile to outputfile|
