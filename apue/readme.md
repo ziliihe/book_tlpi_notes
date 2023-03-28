@@ -14,3 +14,4 @@ chapter 01
 | [dir.c](ch01/dir.c)| dir <path>| list path |
 |[mecho0.c](ch01/mecho0.c)| ./mecho0 > data<br>./mecho0 < infile > outputfile| data as the output file<br>cp infile to outputfile|
 |[mypid.c](ch01/mypid.c)| ./mypid|get current runnable file proess id|
+|[get_cmd_and_exec.c](ch01/get_cmd_and_exec.c)|./get_cmd_and_exec | input cmd, execute it and return it|
