@@ -16,7 +16,8 @@ Linux 编程特性
 作者编程建议
 ```
 本人于1987年开始使用UNIX和C语言。
-当时，作者连续几个礼拜都泡在一台HP Bobcat工作站旁，陪伴我的只有Marc Rochkind所著Advanced UNIX Programming （第1版）一书，
+当时，作者连续几个礼拜都泡在一台HP Bobcat工作站旁，
+陪伴我的只有Marc Rochkind所著Advanced UNIX Programming （第1版）一书，
 以及一本最终被翻得卷了边的C shell手册的印刷本。
 投入时间阅读文档（如果有的话），并编写一些小型的（规模可逐渐变大）测试程序进行试验，
 直至自己对软件的理解感到信心满满——这是作者当时所采用的编程学习方法，
